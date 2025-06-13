@@ -1,8 +1,9 @@
-# forecast_model.py
 import pandas as pd
 from orbit.models import DLT
+import pickle
+import os
 
-def train_and_forecast(df_clean, selected_country):
+def train_and_forecast(df_clean, selected_country, save_model_path="trained_orbit_model.pkl"):
     # Filter data by country
     df_country = df_clean[df_clean['Country'] == selected_country]
 
@@ -34,6 +35,10 @@ def train_and_forecast(df_clean, selected_country):
         seasonality=1,
     )
     model.fit(df_agg)
+
+    # Save model
+    with open(save_model_path, "wb") as f:
+        pickle.dump(model, f)
 
     # Forecast future years
     forecast_years = [2025, 2030, 2035, 2040, 2045, 2050]

@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import xgboost as xgb
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+from sklearn.ensemble import RandomForestRegressor 
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import os
 from datetime import datetime
@@ -236,12 +236,19 @@ def load_data():
 # Load trained model (dummy model for demo)
 @st.cache_resource
 def load_model():
-    # Create a dummy model for demonstration
-    model = xgb.XGBRegressor()
+    df = load_data()
+    expected_features = load_feature_names()
+    target_col = "Crop_Yield_MT_per_HA"
     
-    # Create dummy data to fit the model
-    X = np.random.rand(100, 10)
-    y = np.random.rand(100)
+    # Ensure all expected features are in the dataframe
+    for feature in expected_features:
+        if feature not in df.columns:
+            df[feature] = 0
+    
+    X = df[expected_features]
+    y = df[target_col]
+    
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
     model.fit(X, y)
     
     return model
@@ -550,9 +557,7 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
-    # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
-    # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
- # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
+ 
    # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
     with tab3:
         st.markdown("### 📊 Data Explorer")
