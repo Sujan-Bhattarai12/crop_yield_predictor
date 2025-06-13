@@ -9,8 +9,7 @@ def load_data(filepath):
     return df
 
 def clean_data(df):
-    # Rename columns for clarity
-    df.rename(columns={'Irrigation_Access_%': 'Irrigation_Access_percent'}, inplace=True) 
+    df.rename(columns={'Irrigation_Access_%': 'Irrigation_Access_percent'}, inplace=True)
     return df
 
 def main():
