@@ -1,9 +1,9 @@
 # requirements.txt
-aext-assistant==1.0.0
-aext-assistant-server==1.0.0
-aext-core==1.0.0
-aext-core-server==1.0.0
-aext-panels==1.0.0
+aext-assistant
+aext-assistant-server
+aext-core
+aext-core-server
+aext-panels
 aext-panels-server==1.0.0
 aext-share-notebook==1.0.0
 aext-share-notebook-server==1.0.0
