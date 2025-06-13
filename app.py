@@ -669,7 +669,7 @@ def main():
             st.markdown("Distribution of crop types and adaptation strategies")
             
             # Select categorical column
-            cat_cols = ['Crop_Type', 'Adaptation_Strategy']
+            cat_cols = ['Crop_Type']
             selected_cat = st.selectbox("Select Categorical Variable", cat_cols, key="cat_var")
             
             # Select country
