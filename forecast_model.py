@@ -1,9 +1,10 @@
 import pandas as pd
-from orbit.models import DLT
 import pickle
 import os
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import numpy as np
 
-def train_and_forecast(df_clean, selected_country, save_model_path="trained_orbit_model.pkl"):
+def train_and_forecast(df_clean, selected_country, save_model_path="trained_arima_model.pkl"):
     # Filter data by country
     df_country = df_clean[df_clean['Country'] == selected_country]
 
@@ -25,20 +26,25 @@ def train_and_forecast(df_clean, selected_country, save_model_path="trained_orbi
         'Irrigation_Access_percent': 'irrigation',
         'Fertilizer_Use_KG_per_HA': 'fertilizer',
         'Soil_Health_Index': 'soil_health'
-    })
+    }).sort_values('date')
 
-    # Train model
-    model = DLT(
-        response_col='y',
-        date_col='date',
-        regressor_col=['temp', 'precip', 'irrigation', 'fertilizer', 'soil_health'],
-        seasonality=1,
+    # Prepare data for ARIMA
+    y = df_agg['y']
+    exog = df_agg[['temp', 'precip', 'irrigation', 'fertilizer', 'soil_health']]
+    
+    # Fit ARIMA model with exogenous variables
+    model = SARIMAX(
+        y,
+        exog=exog,
+        order=(1, 1, 1),           # Basic ARIMA order (p,d,q)
+        seasonal_order=(0, 0, 0, 0),  # No seasonal component
+        trend='c'
     )
-    model.fit(df_agg)
+    model_fit = model.fit(disp=False)
 
     # Save model
     with open(save_model_path, "wb") as f:
-        pickle.dump(model, f)
+        pickle.dump(model_fit, f)
 
     # Forecast future years
     forecast_years = [2025, 2030, 2035, 2040, 2045, 2050]
@@ -51,9 +57,21 @@ def train_and_forecast(df_clean, selected_country, save_model_path="trained_orbi
         'irrigation': [df_agg['irrigation'].mean()] * size,
         'fertilizer': [df_agg['fertilizer'].mean()] * size,
         'soil_health': [df_agg['soil_health'].mean()] * size,
+    }).set_index('date')
+
+    # Generate forecasts with 95% confidence intervals
+    forecast = model_fit.get_forecast(
+        steps=size,
+        exog=future_df[['temp', 'precip', 'irrigation', 'fertilizer', 'soil_health']]
+    )
+    
+    # Create results DataFrame
+    forecast_df = pd.DataFrame({
+        'date': future_df.index,
+        'prediction': forecast.predicted_mean,
+        'lower': forecast.conf_int()['lower y'],
+        'upper': forecast.conf_int()['upper y']
     })
+    forecast_df['year'] = forecast_df['date'].dt.year
 
-    forecast = model.predict(future_df)
-    forecast['year'] = forecast['date'].dt.year
-
-    return df_agg, forecast, model
+    return df_agg, forecast_df, model_fit

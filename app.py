@@ -377,6 +377,8 @@ def main():
 )
     
     # ===================== FORECASTING TAB (NOW TAB 2) =====================
+    # ===================== FORECASTING TAB =====================
+# ===================== FORECASTING TAB =====================
     with tab2:
         st.markdown("### 🌾 Crop Yield Forecasting (2025–2050)")
         st.markdown("Long-term yield predictions based on historical trends and climate models")
@@ -392,31 +394,37 @@ def main():
             countries = df_clean['Country'].unique().tolist()
             selected_country = st.selectbox("Select Country", countries, key="forecast_country")
         
-        # Train model and forecast for selected country
-        with st.spinner(f"Generating forecast for {selected_country}..."):
-            df_agg, forecast, model = train_and_forecast(df_clean, selected_country)
-            
-        # Year selection
-        with col2:
-            if forecast is not None:
-                forecast_years = forecast['date'].dt.year.unique().tolist()
-                selected_year = st.selectbox("Select Year", forecast_years, key="forecast_year")
+        # Initialize forecast to None
+        forecast = None
         
-        # Display forecast results
-        if forecast is not None and selected_year:
+        # Train model and forecast for selected country
+        try:
+            with st.spinner(f"Generating forecast for {selected_country}..."):
+                df_agg, forecast, model = train_and_forecast(df_clean, selected_country)
+        except Exception as e:
+            st.error(f"Forecast generation failed: {e}")
+            st.stop()
+        
+        # Only proceed if forecast was successfully created
+        if forecast is not None:
+            # Year selection
+            with col2:
+                forecast_years = forecast['year'].unique().tolist()  # Use 'year' column
+                selected_year = st.selectbox("Select Year", forecast_years, key="forecast_year")
+            
             # Filter forecast for selected year
-            selected_forecast = forecast[forecast['date'].dt.year == selected_year]
+            selected_forecast = forecast[forecast['year'] == selected_year]
             
             if not selected_forecast.empty:
+                # UPDATED: Use 'year' column instead of 'date'
                 pred = selected_forecast['prediction'].values[0]
-                lower = selected_forecast['prediction_5'].values[0]
-                upper = selected_forecast['prediction_95'].values[0]
+                lower = selected_forecast['lower'].values[0]
+                upper = selected_forecast['upper'].values[0]
                 
                 # Display forecast in styled card
                 st.markdown(f"<h3>Forecast for {selected_country} in {selected_year}</h3>", unsafe_allow_html=True)
                 st.markdown(f'<div class="forecast-highlight">{pred:.2f} MT/HA</div>', unsafe_allow_html=True)
                 st.markdown(f"**95% Confidence Interval**: {lower:.2f} – {upper:.2f} MT/HA")
-                st.markdown('</div>', unsafe_allow_html=True)
                 
                 # Historical context
                 if 'Crop_Yield_MT_per_HA' in df_agg.columns:
@@ -432,28 +440,18 @@ def main():
             
                 # Forecast table expander
                 with st.expander("📋 View Full Forecast Data Table"):
-                    display_df = forecast[['date', 'prediction', 'prediction_5', 'prediction_95']].copy()
-                    display_df['year'] = display_df['date'].dt.year
-                    display_df = display_df.drop(columns='date')
+                    display_df = forecast[['year', 'prediction', 'lower', 'upper']].copy()
                     st.dataframe(display_df, use_container_width=True)
                 
                 # Visualize forecast
                 st.markdown("### Forecast Trend")
                 fig = px.line(
                     forecast, 
-                    x='date', 
+                    x='year',  # Use year instead of date
                     y='prediction',
                     title=f"Yield Forecast for {selected_country} (2025–2050)",
-                    labels={'date': 'Year', 'prediction': 'Predicted Yield (MT/HA)'}
+                    labels={'year': 'Year', 'prediction': 'Predicted Yield (MT/HA)'}
                 )
-                fig.add_vrect(
-                    x0=forecast['date'].min(), 
-                    x1=datetime(2024, 12, 31),
-                    fillcolor="lightgray",
-                    opacity=0.2,
-                    line_width=0
-                )
-    
                 fig.update_layout(showlegend=True)
                 st.plotly_chart(fig, use_container_width=True)
             
@@ -461,13 +459,14 @@ def main():
             st.markdown("---")
             st.markdown("""
             <div style="font-size: 0.85rem; color: #666; margin-top: 2rem;">
-                <strong>⏳ Forecasting Methodology:</strong> Forecasts are generated using Bayesian Structural Time Series (BSTS) models, 
-                        which provide probabilistic uncertainty estimates through posterior predictive distributions. 
-                        This approach is well-suited for evaluating the causal impact of climate change on agricultural outcomes. 
-                        The model integrates key climate covariates—including temperature, precipitation, and atmospheric CO₂ concentrations.
-                        The resulting 95% confidence intervals quantify the uncertainty associated with future yield projections.
+                <strong>⏳ Forecasting Methodology:</strong> Forecasts are generated using ARIMA models with exogenous variables, 
+                which provide uncertainty estimates through confidence intervals. This statistical approach effectively models 
+                time series patterns while incorporating climate covariates like temperature, precipitation, irrigation access, 
+                fertilizer use, and soil health. The 95% confidence intervals represent the range of probable yield outcomes.
             </div>
             """, unsafe_allow_html=True)
+        else:
+            st.warning("No forecast data was generated. Please try again.")
 
  
    # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
