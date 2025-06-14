@@ -469,33 +469,15 @@ def main():
             st.warning("No forecast data was generated. Please try again.")
 
  
-   # ===================== DATA EXPLORER TAB (NOW TAB 3) =====================
+   # ===================== DATA EXPLORER TAB =====================
     with tab3:
         st.markdown("### 📊 Data Explorer")
         st.markdown("Interactive exploration of agricultural data")
         
-        # Create tabs within Data Explorer
-        tab_ex1, tab_ex2, tab_ex3 = st.tabs(["📦 Numerical Analysis", "📈 Yield Trends", "🌍 Categorical Proportions"])
+        # Reorder tabs with Yield Trends first
+        tab_ex2, tab_ex1, tab_ex3 = st.tabs(["📈 Yield Trends", "📦 Numerical Analysis", "🌍 Categorical Proportions"])
         
-        with tab_ex1:
-            st.markdown("#### Numerical Data Distribution")
-            st.markdown("Boxplots showing distribution of numeric variables")
-            
-            # Select numerical column
-            num_cols = df.select_dtypes(include=np.number).columns.tolist()
-            selected_num = st.selectbox("Select Numerical Variable", num_cols, key="num_var")
-            
-            # Boxplot
-            fig = px.box(df, y=selected_num, color_discrete_sequence=['#2e7d32'])
-            fig.update_layout(title=f"Distribution of {selected_num}", height=500)
-            st.plotly_chart(fig, use_container_width=True)
-            
-            # Summary statistics
-            st.markdown("##### Summary Statistics")
-            stats = df[selected_num].describe().reset_index()
-            stats.columns = ['Metric', 'Value']
-            st.dataframe(stats, use_container_width=True, hide_index=True)
-        
+        # ========== YIELD TRENDS TAB (NOW FIRST) ==========
         with tab_ex2:
             st.markdown("#### Crop Yield Trends Over Time")
             st.markdown("Explore historical yield patterns by country")
@@ -547,16 +529,21 @@ def main():
                     top_countries.columns = ['Rank', 'Country', 'Avg Yield']
                     st.dataframe(top_countries, use_container_width=True, hide_index=True)
                     
-                    # Bar chart for top countries with distinct green colors
+                    # Bar chart for top countries with wider bars
                     fig_top = px.bar(
                         top_countries,
                         x='Country',
                         y='Avg Yield',
-                        color='Country',  # Use country for distinct colors
+                        color='Country',
                         color_discrete_sequence=px.colors.qualitative.Pastel,
                         title='Highest Yielding Countries'
                     )
-                    fig_top.update_layout(showlegend=False)
+                    # Increase bar width
+                    fig_top.update_traces(width=0.8)
+                    fig_top.update_layout(
+                        showlegend=False,
+                        bargap=0.15  # Reduce gap between bars
+                    )
                     st.plotly_chart(fig_top, use_container_width=True)
                 
                 with col_bottom:
@@ -566,20 +553,46 @@ def main():
                     bottom_countries.columns = ['Rank', 'Country', 'Avg Yield']
                     st.dataframe(bottom_countries, use_container_width=True, hide_index=True)
                     
-                    # Bar chart for bottom countries with distinct red colors
+                    # Bar chart for bottom countries with wider bars
                     fig_bottom = px.bar(
                         bottom_countries,
                         x='Country',
                         y='Avg Yield',
-                        color='Country',  # Use country for distinct colors
+                        color='Country',
                         color_discrete_sequence=px.colors.qualitative.Pastel,
                         title='Lowest Yielding Countries'
                     )
-                    fig_bottom.update_layout(showlegend=False)
+                    # Increase bar width
+                    fig_bottom.update_traces(width=0.8)
+                    fig_bottom.update_layout(
+                        showlegend=False,
+                        bargap=0.15  # Reduce gap between bars
+                    )
                     st.plotly_chart(fig_bottom, use_container_width=True)
             else:
                 st.info("Please select at least one country to view trends")
         
+        # ========== NUMERICAL ANALYSIS TAB ==========
+        with tab_ex1:
+            st.markdown("#### Numerical Data Distribution")
+            st.markdown("Boxplots showing distribution of numeric variables")
+            
+            # Select numerical column
+            num_cols = df.select_dtypes(include=np.number).columns.tolist()
+            selected_num = st.selectbox("Select Numerical Variable", num_cols, key="num_var")
+            
+            # Boxplot
+            fig = px.box(df, y=selected_num, color_discrete_sequence=['#2e7d32'])
+            fig.update_layout(title=f"Distribution of {selected_num}", height=500)
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Summary statistics
+            st.markdown("##### Summary Statistics")
+            stats = df[selected_num].describe().reset_index()
+            stats.columns = ['Metric', 'Value']
+            st.dataframe(stats, use_container_width=True, hide_index=True)
+        
+        # ========== CATEGORICAL PROPORTIONS TAB ==========
         with tab_ex3:
             st.markdown("#### Categorical Proportions by Country")
             st.markdown("Distribution of crop types and adaptation strategies")
@@ -615,16 +628,21 @@ def main():
                     st.plotly_chart(fig_pie, use_container_width=True)
                 
                 with col_bar:
-                    # Bar chart with distinct colors
+                    # Bar chart with wider bars
                     fig_bar = px.bar(
                         proportions,
                         x=selected_cat,
                         y='Proportion',
-                        color=selected_cat,  # Use the category for distinct colors
+                        color=selected_cat,
                         color_discrete_sequence=px.colors.qualitative.Pastel,
                         title=f'{selected_cat} Proportions in {cat_country}'
                     )
-                    fig_bar.update_layout(showlegend=False)
+                    # Increase bar width
+                    fig_bar.update_traces(width=0.8)
+                    fig_bar.update_layout(
+                        showlegend=False,
+                        bargap=0.15  # Reduce gap between bars
+                    )
                     st.plotly_chart(fig_bar, use_container_width=True)
                 
                 # Detailed table
