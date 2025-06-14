@@ -1,5 +1,5 @@
 # Core packages
-numpy==1.24.4
+numpy==1.26.4
 pandas==2.2.2
 datetime  # standard library, no need to install separately
 
