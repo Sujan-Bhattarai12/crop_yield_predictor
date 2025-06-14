@@ -261,8 +261,8 @@ def main():
             st.write("") 
             
             # Climate parameters
-            avg_temp = st.slider("Average Temperature (°C)", 10.0, 30.0, 20.0, 0.5)
-            precipitation = st.slider("Total Precipitation (mm)", 300.0, 1200.0, 600.0, 10.0)
+            avg_temp = st.slider("Average Temperature (°C)", 10.0, 45.0, 20.0, 0.5)
+            precipitation = st.slider("Total Precipitation (mm)", 300.0, 2000.0, 600.0, 10.0)
             extreme_events = st.slider("Extreme Weather Events", 0, 5, 1)
             
             st.markdown('</div>', unsafe_allow_html=True)
