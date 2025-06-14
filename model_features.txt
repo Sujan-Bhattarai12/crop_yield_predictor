@@ -1,13 +1,12 @@
 Year
 Average_Temperature_C
 Total_Precipitation_mm
-CO2_Emissions_MT
 Extreme_Weather_Events
 Irrigation_Access_percent
 Pesticide_Use_KG_per_HA
 Fertilizer_Use_KG_per_HA
 Soil_Health_Index
-Economic_Impact_Million_USD
+Country_Argentina
 Country_Australia
 Country_Brazil
 Country_Canada
@@ -17,39 +16,7 @@ Country_India
 Country_Nigeria
 Country_Russia
 Country_USA
-Region_Central
-Region_East
-Region_Grand Est
-Region_Ile-de-France
-Region_Maharashtra
-Region_Midwest
-Region_New South Wales
-Region_North
-Region_North Central
-Region_North West
-Region_Northeast
-Region_Northwest
-Region_Northwestern
-Region_Nouvelle-Aquitaine
-Region_Ontario
-Region_Pampas
-Region_Patagonia
-Region_Prairies
-Region_Provence-Alpes-Cote d’Azur
-Region_Punjab
-Region_Quebec
-Region_Queensland
-Region_Siberian
-Region_South
-Region_South East
-Region_South West
-Region_Southeast
-Region_Tamil Nadu
-Region_Victoria
-Region_Volga
-Region_West
-Region_West Bengal
-Region_Western Australia
+Crop_Type_Barley
 Crop_Type_Coffee
 Crop_Type_Corn
 Crop_Type_Cotton
@@ -59,7 +26,3 @@ Crop_Type_Soybeans
 Crop_Type_Sugarcane
 Crop_Type_Vegetables
 Crop_Type_Wheat
-Adaptation_Strategies_Drought-resistant Crops
-Adaptation_Strategies_No Adaptation
-Adaptation_Strategies_Organic Farming
-Adaptation_Strategies_Water Management
