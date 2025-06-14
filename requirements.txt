@@ -7,3 +7,5 @@ xgboost==3.0.0
 statsmodels==0.14.4
 orbit-ml==1.1.4.9
 streamlit
+lightgbm
+plotly==5.22.0
