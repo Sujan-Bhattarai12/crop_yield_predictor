@@ -14,7 +14,7 @@ xgboost==1.7.6
 statsmodels==0.14.0
 
 # Probabilistic Forecasting
-orbit-ml==1.1.5
+orbit-ml==1.1.4.9
 
 # App
 streamlit==1.34.0
