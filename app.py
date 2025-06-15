@@ -4,6 +4,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
+import scipy.stats as stats
 from sklearn.ensemble import RandomForestRegressor 
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from datetime import datetime
@@ -182,6 +184,33 @@ st.markdown("""
         font-weight: 700;
         color: var(--accent);
         margin: 10px 0;
+    }
+    
+    /* Subtabs styling */
+    .subtabs .stTabs [data-baseweb="tab"] {
+        padding: 8px 15px !important;
+        font-size: 0.9rem !important;
+        background: #eef2f7 !important;
+        border-radius: 6px !important;
+        margin: 0 3px !important;
+    }
+    
+    .subtabs .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%) !important;
+        color: white !important;
+        font-weight: 600;
+    }
+    
+    .subtabs .stTabs [data-baseweb="tab-list"] {
+        gap: 5px !important;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        margin-bottom: 15px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -385,9 +414,7 @@ def main():
                         """, unsafe_allow_html=True
 )
     
-    # ===================== FORECASTING TAB (NOW TAB 2) =====================
     # ===================== FORECASTING TAB =====================
-# ===================== FORECASTING TAB =====================
     with tab2:
         st.markdown("### 🌾 Crop Yield Forecasting (2025–2050)")
         st.markdown("Long-term yield predictions based on historical trends and climate models")
@@ -483,10 +510,18 @@ def main():
         st.markdown("### 📊 Data Explorer")
         st.markdown("Interactive exploration of agricultural data")
         
-        # Reorder tabs with Yield Trends first
-        tab_ex2, tab_ex1, tab_ex3 = st.tabs(["📈 Yield Trends", "📦 Numerical Analysis", "🌍 Categorical Proportions"])
+        # Create subtabs with distinct styling
+        with st.container():
+            st.markdown('<div class="subtabs">', unsafe_allow_html=True)
+            tab_ex2, tab_ex1, tab_ex3, tab_ex4 = st.tabs([
+                " Yield Trends", 
+                " Numerical Analysis", 
+                " Categorical Proportions",
+                " Statistical Analysis"
+            ])
+            st.markdown('</div>', unsafe_allow_html=True)
         
-        # ========== YIELD TRENDS TAB (NOW FIRST) ==========
+        # ========== YIELD TRENDS TAB ==========
         with tab_ex2:
             st.markdown("#### Crop Yield Trends Over Time")
             st.markdown("Explore historical yield patterns by country")
@@ -659,6 +694,97 @@ def main():
                 st.dataframe(proportions, use_container_width=True, hide_index=True)
             else:
                 st.warning(f"No data available for {cat_country}")
+                
+      # ========== NEW STATISTICAL ANALYSIS TAB ==========
+        with tab_ex4:
+            st.markdown("### Statistical Distribution Analysis")
+            st.markdown("Explore variable distributions and relationships.")
+
+            num_cols = df.select_dtypes(include=np.number).columns.tolist()
+            selected_dist = st.selectbox("Select a numeric variable", num_cols, key="dist_var")
+
+            # ============================================================
+            # BLOCK 1: Distribution + Normality Metrics
+            # ============================================================
+            st.markdown("---")
+            st.markdown("#### Distribution & Normality")
+
+            dist_col1, dist_col2 = st.columns([2, 1])
+
+            with dist_col1:
+                fig_hist = px.histogram(
+                    df,
+                    x=selected_dist,
+                    nbins=30,
+                    marginal="box",
+                    title=f"Distribution of {selected_dist}",
+                    color_discrete_sequence=["#1f77b4"]
+                )
+                fig_hist.update_layout(
+                    height=350,
+                    margin=dict(l=30, r=30, t=40, b=30),
+                    title_x=0.5,
+                    showlegend=False
+                )
+                st.plotly_chart(fig_hist, use_container_width=True)
+
+            with dist_col2:
+                kurt = df[selected_dist].kurtosis()
+                skew = df[selected_dist].skew()
+                st.markdown("##### Normality Metrics")
+                st.metric("Kurtosis", f"{kurt:.2f}")
+                st.caption("Near 0 ≈ normal;&nbsp;&nbsp;&nbsp;&nbsp;>1 = heavy tails;&nbsp;&nbsp;&nbsp;&nbsp;<1 = light tails", unsafe_allow_html=True)
+
+                st.metric("Skewness", f"{skew:.2f}")
+                st.caption("Near 0 ≈ symmetrical;&nbsp;&nbsp;&nbsp;&nbsp;&gt;0 = right skew;&nbsp;&nbsp;&nbsp;&nbsp;&lt;0 = left skew", unsafe_allow_html=True)
+
+            # ============================================================
+            # BLOCK 2: Q-Q Plot
+            # ============================================================
+            # ============================================================
+
+            st.markdown("---")
+            st.markdown("#### Quantile-Quantile Plot")
+
+            qq_data = df[selected_dist].dropna()
+            qq_data = (qq_data - qq_data.mean()) / qq_data.std()
+            theoretical = np.sort(np.random.normal(size=len(qq_data)))
+            sample = np.sort(qq_data)
+
+            fig_qq = px.scatter(
+                x=theoretical,
+                y=sample,
+                labels={'x': 'Theoretical Quantiles', 'y': 'Sample Quantiles'},
+                title="."
+            )
+            fig_qq.update_traces(marker=dict(size=4, color="#1f77b4"))
+            fig_qq.add_shape(
+                type='line',
+                x0=theoretical.min(), y0=theoretical.min(),
+                x1=theoretical.max(), y1=theoretical.max(),
+                line=dict(color='red', dash='dash')
+            )
+            fig_qq.update_layout(
+                height=400,
+                width=800,
+                margin=dict(l=20, r=20, t=20, b=20),
+                showlegend=False
+            )
+
+            # Layout: Q-Q plot (left) + explanation (right)
+            qq_col1, qq_col2 = st.columns([1, 1.2])
+
+            with qq_col1:
+                st.plotly_chart(fig_qq, use_container_width=False)
+
+            with qq_col2:
+                st.markdown("##### What is a Q-Q Plot?")
+                st.markdown("""
+                A Quantile-Quantile (Q-Q) plot compares the distribution of sample data to a theoretical normal distribution.
+                
+                - If the points lie approximately along the red dashed line, at tails as well, your data is **normally distributed**.
+                - Systematic deviations from the line indicate **skewness** or **non-normality**.
+                """)        
 
 # Run main
 if __name__ == "__main__":
