@@ -19,6 +19,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+    <style>
+    html {
+        color-scheme: light !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # Custom CSS for professional styling
 st.markdown("""
 <style>
