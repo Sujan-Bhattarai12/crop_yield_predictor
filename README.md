@@ -20,8 +20,3 @@ This application provides predictive insights into crop yields across 10 differe
 - **LightGBM** for feature-rich tabular data modeling  
 - **ARIMA** for univariate time series forecasting
 
-##  Getting Started
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/crop-forecasting-app.git
