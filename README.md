@@ -1,1 +1,1 @@
-![EDA Plot](Output/eda.png)
+![EDA Plot](Output/EDA.png)
