@@ -1,1 +1,1 @@
-![Exploratory Data Analysis](./Output/eda.png)
+![EDA Plot](Output/eda.png)
