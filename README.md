@@ -19,6 +19,7 @@ cd crop_yield_predictor
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+```
 
 ## Glimpse of an output
 
