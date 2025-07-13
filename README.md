@@ -1,4 +1,3 @@
-# Project Overview
 # Crop Yield Predictor
 
 Predicting crop yields across 10 countries using LightGBM for initial prediction and ARIMA for 25-year forecasting.
