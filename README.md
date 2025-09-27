@@ -9,8 +9,8 @@ This project provides a **Streamlit web application** that enables interactive p
 
 ## Problem Statement  
 The app addresses the following key questions:  
-1. Can we accurately predict crop yield based on features such as area, production, season, and crop type?  
-2. How can we forecast future yields using time series methods?  
+1. Can I accurately predict crop yield based on features such as area, production, season, and crop type?  
+2. How can I forecast future yields using time series methods?  
 3. What are the underlying statistical properties of the dataset (e.g., distribution, correlation, normality)?  
 4. How can machine learning and forecasting methods be combined in a single interface for better insights?  
 
@@ -39,11 +39,9 @@ The app addresses the following key questions:
 - Correlation heatmaps to visualize feature relationships.  
 - Distribution plots of numeric variables.  
 - Q-Q plots for testing normality of residuals.  
-
 ---
 
 ## Results & Interpretation  
-
 - **Model Accuracy**  
   - LightGBM achieved strong predictive power on yield data, with reasonable MAE and R² values.  
   - Performance depends on feature selection (e.g., including "Area" and "Production" improves accuracy).  
@@ -55,7 +53,6 @@ The app addresses the following key questions:
 - **Statistical Insights**  
   - Strong correlations were observed between yield, production, and area.  
   - Some distributions deviated from normality, highlighting the importance of robust machine learning models.  
-
 ---
 
 ## Key Takeaways  
@@ -73,11 +70,3 @@ The app addresses the following key questions:
 - Add geospatial visualizations (maps of yield across regions).  
 
 ---
-
-## How to Run  
-
-1. Clone the repository and install dependencies:  
-   ```bash
-   git clone <repo_url>
-   cd <repo_folder>
-   pip install -r requirements.txt
