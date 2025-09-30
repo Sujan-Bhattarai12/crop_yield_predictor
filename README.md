@@ -21,7 +21,7 @@ Climate change poses unprecedented threats to global food security. Agricultural
 
 ---
 
-## Technical Highlights (For Recruiters)
+## Technical HighlightsS
 
 ### Machine Learning & Advanced Analytics
 - **Gradient Boosting (LightGBM)**: Achieved MAE of 0.23 MT/HA and R² of 0.91 on validation set
