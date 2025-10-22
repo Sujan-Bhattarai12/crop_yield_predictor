@@ -1,13 +1,3 @@
----
-title: "Agricultural Yield Intelligence System"
-subtitle: "Machine Learning-Powered Crop Yield Prediction & Forecasting Platform"
-output: github_document
----
-
-> **A data-driven platform combining predictive modeling, causal inference, and time series forecasting to enhance agricultural decision-making under climate uncertainty.**
-
----
-
 ## Problem & Business Value
 
 Climate change threatens global food security. This system provides **predictive intelligence** for:
