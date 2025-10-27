@@ -21,13 +21,11 @@ Climate change threatens global food security. This system provides **predictive
 ---
 
 ## Technical Highlights
-
 - **Feature Engineering:** 47 engineered variables (interactions, encodings, temporal aggregations)  
 - **Model Optimization:** GridSearchCV & cross-validation for hyperparameter tuning  
 - **Statistical Validation:** Residual normality and significance testing (p < 0.05)  
 - **Forecast Validation:** Walk-forward validation, AIC/BIC optimization, residual diagnostics  
 - **Performance:** Yield prediction accuracy within ±0.5 MT/HA for 87% of cases  
-
 ---
 
 ## Key Insights
@@ -38,10 +36,4 @@ Climate change threatens global food security. This system provides **predictive
   - Global yields expected to **decline ~8%** by 2050  
   - **Sub-Saharan Africa:** Highest risk (−15%)  
   - **Northern Regions:** +5% yield potential with adaptation  
-
 ---
-
-## Architecture Overview
-
-```text
-Data Ingestion → Feature Engineering → ML & Forecasting Pipelines → Dashboard
